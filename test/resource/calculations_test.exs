@@ -277,5 +277,59 @@ defmodule Ash.Test.Resource.CalculationsTest do
       comment_with_post_name = Ash.load!(comment, :post_name, tenant: tenant_id)
       assert comment_with_post_name.post_name == post.name
     end
+
+    test "calculations can be loaded through union type attribute" do
+      defmodule NormalContent do
+        @moduledoc false
+        use Ash.Resource, data_layer: :embedded
+
+        attributes do
+          uuid_primary_key :id
+        end
+
+        calculations do
+          calculate :calc, :integer, expr(1)
+        end
+      end
+
+      defmodule Content3 do
+        use Ash.Type.NewType,
+          subtype_of: :union,
+          constraints: [
+            types: [
+              normal: [
+                type: NormalContent,
+                tag: :type,
+                tag_value: :normal
+              ]
+            ]
+          ]
+      end
+
+      defmodule Post3 do
+        @moduledoc false
+        use Ash.Resource, domain: Domain, data_layer: Ash.DataLayer.Ets
+
+        attributes do
+          uuid_primary_key :id
+          attribute :content, Content3
+        end
+
+        actions do
+          defaults [:read, create: [:content]]
+        end
+      end
+
+      post =
+        Post3
+        |> Ash.Changeset.for_create(:create, %{content: %{type: :normal}})
+        |> Ash.create!()
+
+      assert %Ash.NotLoaded{} = post.content.value.calc
+
+      post_with_content_calc = Ash.load!(post, content: [:calc])
+
+      assert post_with_content_calc.content.value.calc == 1
+    end
   end
 end
