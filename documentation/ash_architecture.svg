@@ -1,0 +1,195 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1320" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#2563eb"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#06b6d4"/><stop offset="100%" stop-color="#0891b2"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#14b8a6"/><stop offset="100%" stop-color="#0d9488"/></linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#059669"/></linearGradient>
+    <linearGradient id="g5a" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#22c55e"/><stop offset="100%" stop-color="#16a34a"/></linearGradient>
+    <linearGradient id="g5b" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#84cc16"/><stop offset="100%" stop-color="#65a30d"/></linearGradient>
+    <linearGradient id="g6" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#eab308"/><stop offset="100%" stop-color="#ca8a04"/></linearGradient>
+    <linearGradient id="g7" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#ea580c"/></linearGradient>
+    <linearGradient id="g8" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ef4444"/><stop offset="100%" stop-color="#dc2626"/></linearGradient>
+    <linearGradient id="gCross" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#a855f7"/><stop offset="100%" stop-color="#9333ea"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.3"/></filter>
+    <marker id="arrowWhite" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="1320" fill="url(#bg)" rx="0"/>
+
+  <!-- Title -->
+  <text x="500" y="50" text-anchor="middle" font-size="28" font-weight="bold" fill="#f97316">Ash Framework Architecture</text>
+  <text x="500" y="75" text-anchor="middle" font-size="14" fill="#94a3b8">Elixir Declarative Resource Framework &mdash; Layer Diagram</text>
+
+  <!-- ==================== MAIN LAYERS ==================== -->
+
+  <!-- Layer 1: Public API -->
+  <rect x="140" y="100" width="720" height="70" rx="12" fill="url(#g1)" filter="url(#shadow)" opacity="0.95"/>
+  <text x="170" y="127" font-size="11" fill="#93c5fd" font-weight="600" letter-spacing="1">LAYER 1</text>
+  <text x="170" y="148" font-size="18" fill="white" font-weight="bold">Public API</text>
+  <text x="170" y="163" font-size="11" fill="#bfdbfe">ash.ex</text>
+  <text x="830" y="135" text-anchor="end" font-size="11" fill="#bfdbfe" font-family="Consolas, monospace">Ash.read  Ash.create  Ash.update  Ash.destroy</text>
+  <text x="830" y="152" text-anchor="end" font-size="11" fill="#bfdbfe" font-family="Consolas, monospace">Ash.bulk_*  Ash.stream!  Ash.load  Ash.can</text>
+
+  <!-- Arrow 1→2 -->
+  <line x1="500" y1="170" x2="500" y2="195" stroke="#64748b" stroke-width="2" marker-end="url(#arrowWhite)"/>
+
+  <!-- Layer 2: Domain -->
+  <rect x="180" y="200" width="640" height="65" rx="12" fill="url(#g2)" filter="url(#shadow)" opacity="0.95"/>
+  <text x="210" y="225" font-size="11" fill="#a5f3fc" font-weight="600" letter-spacing="1">LAYER 2</text>
+  <text x="210" y="246" font-size="18" fill="white" font-weight="bold">Domain</text>
+  <text x="790" y="235" text-anchor="end" font-size="11" fill="#a5f3fc" font-family="Consolas, monospace">Ash.Domain  Ash.Domain.Dsl  Ash.CodeInterface</text>
+  <text x="790" y="252" text-anchor="end" font-size="11" fill="#a5f3fc">리소스 그룹화 / 도메인 설정 / 코드 인터페이스 생성</text>
+
+  <!-- Arrow 2→3 -->
+  <line x1="500" y1="265" x2="500" y2="290" stroke="#64748b" stroke-width="2" marker-end="url(#arrowWhite)"/>
+
+  <!-- Layer 3: Resource -->
+  <rect x="140" y="295" width="720" height="80" rx="12" fill="url(#g3)" filter="url(#shadow)" opacity="0.95"/>
+  <text x="170" y="322" font-size="11" fill="#99f6e4" font-weight="600" letter-spacing="1">LAYER 3</text>
+  <text x="170" y="343" font-size="18" fill="white" font-weight="bold">Resource</text>
+  <text x="170" y="363" font-size="11" fill="#99f6e4">선언적 엔티티 정의 (DSL via Spark)</text>
+  <text x="830" y="325" text-anchor="end" font-size="10.5" fill="#ccfbf1" font-family="Consolas, monospace">Attribute  Relationship  Identity</text>
+  <text x="830" y="342" text-anchor="end" font-size="10.5" fill="#ccfbf1" font-family="Consolas, monospace">Calculation  Aggregate  Validation</text>
+  <text x="830" y="359" text-anchor="end" font-size="10.5" fill="#ccfbf1" font-family="Consolas, monospace">Change  Preparation  Action Defs</text>
+
+  <!-- Arrow 3→4 -->
+  <line x1="500" y1="375" x2="500" y2="400" stroke="#64748b" stroke-width="2" marker-end="url(#arrowWhite)"/>
+
+  <!-- Layer 4: Action Engine -->
+  <rect x="180" y="405" width="640" height="65" rx="12" fill="url(#g4)" filter="url(#shadow)" opacity="0.95"/>
+  <text x="210" y="430" font-size="11" fill="#a7f3d0" font-weight="600" letter-spacing="1">LAYER 4</text>
+  <text x="210" y="451" font-size="18" fill="white" font-weight="bold">Action Engine</text>
+  <text x="790" y="435" text-anchor="end" font-size="11" fill="#a7f3d0" font-family="Consolas, monospace">Create  Read  Update  Destroy  Generic</text>
+  <text x="790" y="452" text-anchor="end" font-size="11" fill="#a7f3d0">액션 실행 / Bulk 처리 / 스트리밍</text>
+
+  <!-- Branch arrows from Action to Changeset and Query -->
+  <line x1="360" y1="470" x2="310" y2="510" stroke="#64748b" stroke-width="2" marker-end="url(#arrowWhite)"/>
+  <line x1="640" y1="470" x2="690" y2="510" stroke="#64748b" stroke-width="2" marker-end="url(#arrowWhite)"/>
+
+  <!-- Layer 5a: Changeset (left) -->
+  <rect x="110" y="515" width="370" height="80" rx="12" fill="url(#g5a)" filter="url(#shadow)" opacity="0.95"/>
+  <text x="140" y="540" font-size="11" fill="#bbf7d0" font-weight="600" letter-spacing="1">LAYER 5A &mdash; WRITE</text>
+  <text x="140" y="562" font-size="17" fill="white" font-weight="bold">Changeset</text>
+  <text x="140" y="582" font-size="11" fill="#bbf7d0">변경/검증/before·after 훅/트랜잭션</text>
+  <text x="450" y="552" text-anchor="end" font-size="10" fill="#dcfce7" font-family="Consolas, monospace">Ash.Changeset</text>
+  <text x="450" y="567" text-anchor="end" font-size="10" fill="#dcfce7" font-family="Consolas, monospace">Ash.ActionInput</text>
+
+  <!-- Layer 5b: Query (right) -->
+  <rect x="520" y="515" width="370" height="80" rx="12" fill="url(#g5b)" filter="url(#shadow)" opacity="0.95"/>
+  <text x="550" y="540" font-size="11" fill="#ecfccb" font-weight="600" letter-spacing="1">LAYER 5B &mdash; READ</text>
+  <text x="550" y="562" font-size="17" fill="white" font-weight="bold">Query &amp; Filter</text>
+  <text x="550" y="582" font-size="11" fill="#ecfccb">쿼리 조합 / 필터 / 정렬 / 페이지네이션</text>
+  <text x="860" y="552" text-anchor="end" font-size="10" fill="#f7fee7" font-family="Consolas, monospace">Ash.Query</text>
+  <text x="860" y="567" text-anchor="end" font-size="10" fill="#f7fee7" font-family="Consolas, monospace">Ash.Filter  Ash.Sort</text>
+
+  <!-- Merge arrows from Changeset/Query down -->
+  <line x1="295" y1="595" x2="370" y2="630" stroke="#64748b" stroke-width="2" marker-end="url(#arrowWhite)"/>
+  <line x1="705" y1="595" x2="630" y2="630" stroke="#64748b" stroke-width="2" marker-end="url(#arrowWhite)"/>
+
+  <!-- Layer 6: Expression & Type -->
+  <rect x="200" y="635" width="600" height="65" rx="12" fill="url(#g6)" filter="url(#shadow)" opacity="0.95"/>
+  <text x="230" y="660" font-size="11" fill="#fef9c3" font-weight="600" letter-spacing="1">LAYER 6</text>
+  <text x="230" y="681" font-size="18" fill="white" font-weight="bold">Expression &amp; Type System</text>
+  <text x="770" y="665" text-anchor="end" font-size="11" fill="#fef9c3" font-family="Consolas, monospace">Ash.Expr  Ash.Type  Operators  Functions</text>
+  <text x="770" y="682" text-anchor="end" font-size="11" fill="#fef9c3">표현식 평가 / 타입 제약 / 연산자·함수</text>
+
+  <!-- Arrow 6→7 -->
+  <line x1="500" y1="700" x2="500" y2="725" stroke="#64748b" stroke-width="2" marker-end="url(#arrowWhite)"/>
+
+  <!-- Layer 7: Policy -->
+  <rect x="180" y="730" width="640" height="65" rx="12" fill="url(#g7)" filter="url(#shadow)" opacity="0.95"/>
+  <text x="210" y="755" font-size="11" fill="#ffedd5" font-weight="600" letter-spacing="1">LAYER 7</text>
+  <text x="210" y="776" font-size="18" fill="white" font-weight="bold">Policy &amp; Authorization</text>
+  <text x="790" y="760" text-anchor="end" font-size="11" fill="#ffedd5" font-family="Consolas, monospace">Ash.Policy  Ash.Authorizer  Ash.SatSolver</text>
+  <text x="790" y="777" text-anchor="end" font-size="11" fill="#ffedd5">접근 제어 / 정책 검증 (SAT Solver)</text>
+
+  <!-- Arrow 7→8 -->
+  <line x1="500" y1="795" x2="500" y2="820" stroke="#64748b" stroke-width="2" marker-end="url(#arrowWhite)"/>
+
+  <!-- Layer 8: Data Layer -->
+  <rect x="140" y="825" width="720" height="75" rx="12" fill="url(#g8)" filter="url(#shadow)" opacity="0.95"/>
+  <text x="170" y="852" font-size="11" fill="#fecaca" font-weight="600" letter-spacing="1">LAYER 8</text>
+  <text x="170" y="873" font-size="18" fill="white" font-weight="bold">Data Layer</text>
+  <text x="170" y="891" font-size="11" fill="#fecaca">저장소 추상화 / 확장 가능</text>
+  <text x="830" y="858" text-anchor="end" font-size="11" fill="#fee2e2" font-family="Consolas, monospace">Ash.DataLayer  ETS  Mnesia  Simple</text>
+  <text x="830" y="875" text-anchor="end" font-size="11" fill="#fee2e2" font-family="Consolas, monospace">AshPostgres  AshSqlite  (extensions)</text>
+
+  <!-- ==================== CROSS-CUTTING ==================== -->
+
+  <!-- Cross-cutting label -->
+  <text x="500" y="945" text-anchor="middle" font-size="14" fill="#c084fc" font-weight="bold" letter-spacing="1">CROSS-CUTTING CONCERNS</text>
+
+  <!-- Three cross-cutting boxes -->
+  <rect x="70" y="965" width="260" height="100" rx="10" fill="url(#gCross)" filter="url(#shadow)" opacity="0.85"/>
+  <text x="200" y="995" text-anchor="middle" font-size="16" fill="white" font-weight="bold">Notifier</text>
+  <text x="200" y="1015" text-anchor="middle" font-size="11" fill="#e9d5ff">이벤트 알림 시스템</text>
+  <text x="200" y="1032" text-anchor="middle" font-size="11" fill="#e9d5ff">PubSub 통합</text>
+  <text x="200" y="1049" text-anchor="middle" font-size="10" fill="#d8b4fe" font-family="Consolas, monospace">Ash.Notifier</text>
+
+  <rect x="370" y="965" width="260" height="100" rx="10" fill="url(#gCross)" filter="url(#shadow)" opacity="0.85"/>
+  <text x="500" y="995" text-anchor="middle" font-size="16" fill="white" font-weight="bold">Tracer</text>
+  <text x="500" y="1015" text-anchor="middle" font-size="11" fill="#e9d5ff">관측 가능성 &amp; 추적</text>
+  <text x="500" y="1032" text-anchor="middle" font-size="11" fill="#e9d5ff">Telemetry 통합</text>
+  <text x="500" y="1049" text-anchor="middle" font-size="10" fill="#d8b4fe" font-family="Consolas, monospace">Ash.Tracer</text>
+
+  <rect x="670" y="965" width="260" height="100" rx="10" fill="url(#gCross)" filter="url(#shadow)" opacity="0.85"/>
+  <text x="800" y="995" text-anchor="middle" font-size="16" fill="white" font-weight="bold">Reactor</text>
+  <text x="800" y="1015" text-anchor="middle" font-size="11" fill="#e9d5ff">워크플로우 오케스트레이션</text>
+  <text x="800" y="1032" text-anchor="middle" font-size="11" fill="#e9d5ff">멀티 스텝 흐름</text>
+  <text x="800" y="1049" text-anchor="middle" font-size="10" fill="#d8b4fe" font-family="Consolas, monospace">Ash.Reactor</text>
+
+  <!-- Dashed vertical line for cross-cutting -->
+  <line x1="55" y1="130" x2="55" y2="870" stroke="#a855f7" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.4"/>
+  <line x1="945" y1="130" x2="945" y2="870" stroke="#a855f7" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.4"/>
+
+  <!-- ==================== REQUEST FLOW ==================== -->
+
+  <text x="500" y="1120" text-anchor="middle" font-size="14" fill="#f97316" font-weight="bold" letter-spacing="1">REQUEST FLOW</text>
+
+  <!-- Flow: left side (write) -->
+  <rect x="130" y="1145" width="150" height="32" rx="8" fill="#2563eb" opacity="0.9"/>
+  <text x="205" y="1166" text-anchor="middle" font-size="11" fill="white" font-weight="600">User Code</text>
+  <line x1="205" y1="1177" x2="205" y2="1192" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowWhite)"/>
+
+  <rect x="130" y="1197" width="150" height="32" rx="8" fill="#0891b2" opacity="0.9"/>
+  <text x="205" y="1218" text-anchor="middle" font-size="11" fill="white" font-weight="600">Domain Resolve</text>
+  <line x1="205" y1="1229" x2="205" y2="1244" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowWhite)"/>
+
+  <rect x="130" y="1249" width="150" height="32" rx="8" fill="#16a34a" opacity="0.9"/>
+  <text x="205" y="1270" text-anchor="middle" font-size="11" fill="white" font-weight="600">Changeset</text>
+  <line x1="205" y1="1281" x2="205" y2="1296" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowWhite)"/>
+
+  <!-- Flow: right side (read) -->
+  <rect x="720" y="1145" width="150" height="32" rx="8" fill="#2563eb" opacity="0.9"/>
+  <text x="795" y="1166" text-anchor="middle" font-size="11" fill="white" font-weight="600">User Code</text>
+  <line x1="795" y1="1177" x2="795" y2="1192" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowWhite)"/>
+
+  <rect x="720" y="1197" width="150" height="32" rx="8" fill="#0891b2" opacity="0.9"/>
+  <text x="795" y="1218" text-anchor="middle" font-size="11" fill="white" font-weight="600">Domain Resolve</text>
+  <line x1="795" y1="1229" x2="795" y2="1244" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowWhite)"/>
+
+  <rect x="720" y="1249" width="150" height="32" rx="8" fill="#65a30d" opacity="0.9"/>
+  <text x="795" y="1270" text-anchor="middle" font-size="11" fill="white" font-weight="600">Query &amp; Filter</text>
+  <line x1="795" y1="1281" x2="795" y2="1296" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowWhite)"/>
+
+  <!-- Shared bottom flow -->
+  <!-- Authorization -->
+  <line x1="205" y1="1296" x2="420" y2="1296" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="795" y1="1296" x2="580" y2="1296" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <rect x="410" y="1286" width="180" height="32" rx="8" fill="#ea580c" opacity="0.9"/>
+  <text x="500" y="1307" text-anchor="middle" font-size="11" fill="white" font-weight="600">Authorization</text>
+
+  <!-- Labels -->
+  <text x="205" y="1140" text-anchor="middle" font-size="11" fill="#94a3b8" font-weight="600">WRITE PATH</text>
+  <text x="795" y="1140" text-anchor="middle" font-size="11" fill="#94a3b8" font-weight="600">READ PATH</text>
+
+  <!-- Footer -->
+  <text x="500" y="1310" text-anchor="middle" font-size="10" fill="#475569" dy="10">Ash Framework v3.0 — devall-org/ash</text>
+</svg>
