@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ash Framework - Architecture Layers</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  h1 {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #f97316, #ef4444, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #94a3b8;
+    margin-bottom: 40px;
+    font-size: 1rem;
+  }
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  /* Layer card */
+  .layer {
+    position: relative;
+    border-radius: 14px;
+    padding: 22px 28px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+  }
+  .layer:hover {
+    transform: scale(1.015);
+    z-index: 2;
+  }
+  .layer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .layer-num {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    opacity: 0.7;
+  }
+  .layer-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 4px 0;
+  }
+  .layer-desc {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    line-height: 1.5;
+  }
+  .layer-modules {
+    display: none;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .layer.expanded .layer-modules {
+    display: block;
+  }
+  .module-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .module-tag {
+    font-size: 0.78rem;
+    padding: 4px 12px;
+    border-radius: 6px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    font-family: 'SFMono-Regular', 'Consolas', monospace;
+  }
+  .expand-hint {
+    font-size: 0.75rem;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+  }
+  .layer:hover .expand-hint { opacity: 0.9; }
+
+  /* Arrow connector */
+  .arrow {
+    text-align: center;
+    font-size: 1.4rem;
+    color: #475569;
+    line-height: 1;
+    margin: 2px 0;
+    user-select: none;
+  }
+
+  /* Layer colors */
+  .layer-api       { background: linear-gradient(135deg, #1e3a5f, #1e293b); border-color: #3b82f6; }
+  .layer-domain    { background: linear-gradient(135deg, #1a3347, #1e293b); border-color: #06b6d4; }
+  .layer-resource  { background: linear-gradient(135deg, #1a3340, #1e293b); border-color: #14b8a6; }
+  .layer-action    { background: linear-gradient(135deg, #1a3335, #1e293b); border-color: #10b981; }
+  .layer-changeset { background: linear-gradient(135deg, #1e3330, #1e293b); border-color: #22c55e; }
+  .layer-query     { background: linear-gradient(135deg, #2a3320, #1e293b); border-color: #84cc16; }
+  .layer-expr      { background: linear-gradient(135deg, #33301a, #1e293b); border-color: #eab308; }
+  .layer-type      { background: linear-gradient(135deg, #332a1a, #1e293b); border-color: #f59e0b; }
+  .layer-policy    { background: linear-gradient(135deg, #33221a, #1e293b); border-color: #f97316; }
+  .layer-data      { background: linear-gradient(135deg, #331a1a, #1e293b); border-color: #ef4444; }
+  .layer-cross     { background: linear-gradient(135deg, #2d1a33, #1e293b); border-color: #a855f7; }
+
+  /* Side label */
+  .side-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-top: 30px;
+  }
+  .side-card {
+    border-radius: 12px;
+    padding: 18px 20px;
+    border: 1px solid rgba(168,85,247,0.3);
+    background: linear-gradient(135deg, #2d1a33, #1e293b);
+  }
+  .side-card h3 {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    color: #c084fc;
+  }
+  .side-card p {
+    font-size: 0.8rem;
+    opacity: 0.75;
+    line-height: 1.5;
+  }
+
+  /* Flow diagram */
+  .flow-section {
+    margin-top: 50px;
+    padding: 30px;
+    border-radius: 16px;
+    background: #1e293b;
+    border: 1px solid #334155;
+  }
+  .flow-section h2 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    color: #f97316;
+  }
+  .flow-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .flow-node {
+    padding: 12px 28px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+    min-width: 280px;
+  }
+  .flow-arrow {
+    font-size: 1.2rem;
+    color: #64748b;
+    padding: 4px 0;
+  }
+  .flow-branch {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .flow-branch-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .flow-branch-label {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-bottom: 4px;
+  }
+  .fn-blue   { background: #1e40af; color: #bfdbfe; }
+  .fn-teal   { background: #0f766e; color: #ccfbf1; }
+  .fn-green  { background: #15803d; color: #bbf7d0; }
+  .fn-amber  { background: #b45309; color: #fef3c7; }
+  .fn-red    { background: #b91c1c; color: #fecaca; }
+  .fn-purple { background: #7e22ce; color: #e9d5ff; }
+
+  .legend {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #64748b;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Ash Framework Architecture</h1>
+  <p class="subtitle">Elixir declarative resource framework &mdash; click each layer to expand modules</p>
+
+  <!-- Layer 1: Public API -->
+  <div class="layer layer-api" onclick="toggle(this)">
+    <div class="layer-header">
+      <div>
+        <div class="layer-num">Layer 1 &mdash; Entry Point</div>
+        <div class="layer-title">Public API (ash.ex)</div>
+        <div class="layer-desc">Ash.read, Ash.create, Ash.update, Ash.destroy, Ash.bulk_*, Ash.stream!</div>
+      </div>
+      <div class="expand-hint">&#9662; details</div>
+    </div>
+    <div class="layer-modules">
+      <div class="module-grid">
+        <span class="module-tag">Ash.read/2</span>
+        <span class="module-tag">Ash.create/2</span>
+        <span class="module-tag">Ash.update/2</span>
+        <span class="module-tag">Ash.destroy/2</span>
+        <span class="module-tag">Ash.bulk_create/4</span>
+        <span class="module-tag">Ash.bulk_update/4</span>
+        <span class="module-tag">Ash.bulk_destroy/4</span>
+        <span class="module-tag">Ash.stream!/2</span>
+        <span class="module-tag">Ash.load/3</span>
+        <span class="module-tag">Ash.can/4</span>
+        <span class="module-tag">Ash.calculate/3</span>
+        <span class="module-tag">Ash.aggregate/3</span>
+      </div>
+    </div>
+  </div>
+  <div class="arrow">&#x25BC;</div>
+
+  <!-- Layer 2: Domain -->
+  <div class="layer layer-domain" onclick="toggle(this)">
+    <div class="layer-header">
+      <div>
+        <div class="layer-num">Layer 2 &mdash; Orchestration</div>
+        <div class="layer-title">Domain Layer</div>
+        <div class="layer-desc">Groups resources, applies domain-wide configuration, generates code interfaces</div>
+      </div>
+      <div class="expand-hint">&#9662; details</div>
+    </div>
+    <div class="layer-modules">
+      <div class="module-grid">
+        <span class="module-tag">Ash.Domain</span>
+        <span class="module-tag">Ash.Domain.Dsl</span>
+        <span class="module-tag">Ash.Domain.Interface</span>
+        <span class="module-tag">Ash.Domain.Info</span>
+        <span class="module-tag">Ash.CodeInterface</span>
+      </div>
+    </div>
+  </div>
+  <div class="arrow">&#x25BC;</div>
+
+  <!-- Layer 3: Resource -->
+  <div class="layer layer-resource" onclick="toggle(this)">
+    <div class="layer-header">
+      <div>
+        <div class="layer-num">Layer 3 &mdash; Definition</div>
+        <div class="layer-title">Resource Layer</div>
+        <div class="layer-desc">Declarative entity definitions: attributes, relationships, identities, calculations, aggregations</div>
+      </div>
+      <div class="expand-hint">&#9662; details</div>
+    </div>
+    <div class="layer-modules">
+      <div class="module-grid">
+        <span class="module-tag">Ash.Resource</span>
+        <span class="module-tag">Ash.Resource.Dsl</span>
+        <span class="module-tag">Ash.Resource.Attribute</span>
+        <span class="module-tag">Ash.Resource.Relationships</span>
+        <span class="module-tag">Ash.Resource.Identity</span>
+        <span class="module-tag">Ash.Resource.Calculation</span>
+        <span class="module-tag">Ash.Resource.Aggregate</span>
+        <span class="module-tag">Ash.Resource.Validation</span>
+        <span class="module-tag">Ash.Resource.Change</span>
+        <span class="module-tag">Ash.Resource.Preparation</span>
+      </div>
+    </div>
+  </div>
+  <div class="arrow">&#x25BC;</div>
+
+  <!-- Layer 4: Action -->
+  <div class="layer layer-action" onclick="toggle(this)">
+    <div class="layer-header">
+      <div>
+        <div class="layer-num">Layer 4 &mdash; Execution</div>
+        <div class="layer-title">Action Layer</div>
+        <div class="layer-desc">Action execution engine: create, read, update, destroy, and generic actions</div>
+      </div>
+      <div class="expand-hint">&#9662; details</div>
+    </div>
+    <div class="layer-modules">
+      <div class="module-grid">
+        <span class="module-tag">Ash.Actions.Create</span>
+        <span class="module-tag">Ash.Actions.Read</span>
+        <span class="module-tag">Ash.Actions.Update</span>
+        <span class="module-tag">Ash.Actions.Destroy</span>
+        <span class="module-tag">Ash.Actions.Action</span>
+        <span class="module-tag">Ash.Actions.Create.Bulk</span>
+        <span class="module-tag">Ash.Actions.Update.Bulk</span>
+        <span class="module-tag">Ash.Actions.Destroy.Bulk</span>
+        <span class="module-tag">Ash.Actions.Read.Calculations</span>
+      </div>
+    </div>
+  </div>
+  <div class="arrow">&#x25BC;</div>
+
+  <!-- Layer 5 & 6: Changeset / Query (side by side concept, stacked here) -->
+  <div class="layer layer-changeset" onclick="toggle(this)">
+    <div class="layer-header">
+      <div>
+        <div class="layer-num">Layer 5 &mdash; Mutation</div>
+        <div class="layer-title">Changeset Layer</div>
+        <div class="layer-desc">Write operation pipeline: attribute changes, validations, before/after hooks, transactions</div>
+      </div>
+      <div class="expand-hint">&#9662; details</div>
+    </div>
+    <div class="layer-modules">
+      <div class="module-grid">
+        <span class="module-tag">Ash.Changeset</span>
+        <span class="module-tag">Ash.ActionInput</span>
+        <span class="module-tag">Ash.Changeset.ManagedRelationshipHelpers</span>
+        <span class="module-tag">Ash.Notifier.Notification</span>
+      </div>
+    </div>
+  </div>
+  <div class="arrow">&#x25BC;</div>
+
+  <div class="layer layer-query" onclick="toggle(this)">
+    <div class="layer-header">
+      <div>
+        <div class="layer-num">Layer 6 &mdash; Query Building</div>
+        <div class="layer-title">Query & Filter Layer</div>
+        <div class="layer-desc">Query composition, filtering, sorting, aggregation, pagination (offset & keyset)</div>
+      </div>
+      <div class="expand-hint">&#9662; details</div>
+    </div>
+    <div class="layer-modules">
+      <div class="module-grid">
+        <span class="module-tag">Ash.Query</span>
+        <span class="module-tag">Ash.Filter</span>
+        <span class="module-tag">Ash.Query.Aggregate</span>
+        <span class="module-tag">Ash.Query.Calculation</span>
+        <span class="module-tag">Ash.Query.Ref</span>
+        <span class="module-tag">Ash.Sort</span>
+        <span class="module-tag">Ash.Page.Offset</span>
+        <span class="module-tag">Ash.Page.Keyset</span>
+      </div>
+    </div>
+  </div>
+  <div class="arrow">&#x25BC;</div>
+
+  <!-- Layer 7: Expression -->
+  <div class="layer layer-expr" onclick="toggle(this)">
+    <div class="layer-header">
+      <div>
+        <div class="layer-num">Layer 7 &mdash; Expression Engine</div>
+        <div class="layer-title">Expression & Type Layer</div>
+        <div class="layer-desc">Expression evaluation, operators, functions, type system & constraints</div>
+      </div>
+      <div class="expand-hint">&#9662; details</div>
+    </div>
+    <div class="layer-modules">
+      <div class="module-grid">
+        <span class="module-tag">Ash.Expr</span>
+        <span class="module-tag">Ash.Filter.Predicate</span>
+        <span class="module-tag">Ash.Filter.Runtime</span>
+        <span class="module-tag">Ash.Query.Operator.*</span>
+        <span class="module-tag">Ash.Query.Function.*</span>
+        <span class="module-tag">Ash.Type</span>
+        <span class="module-tag">Ash.Type.String</span>
+        <span class="module-tag">Ash.Type.Integer</span>
+        <span class="module-tag">Ash.Type.Map</span>
+        <span class="module-tag">Ash.Type.NewType</span>
+      </div>
+    </div>
+  </div>
+  <div class="arrow">&#x25BC;</div>
+
+  <!-- Layer 8: Policy -->
+  <div class="layer layer-policy" onclick="toggle(this)">
+    <div class="layer-header">
+      <div>
+        <div class="layer-num">Layer 8 &mdash; Authorization</div>
+        <div class="layer-title">Policy & Authorization Layer</div>
+        <div class="layer-desc">Access control policies, authorization checks, SAT solver for policy verification</div>
+      </div>
+      <div class="expand-hint">&#9662; details</div>
+    </div>
+    <div class="layer-modules">
+      <div class="module-grid">
+        <span class="module-tag">Ash.Policy</span>
+        <span class="module-tag">Ash.Policy.Authorizer</span>
+        <span class="module-tag">Ash.Policy.Check</span>
+        <span class="module-tag">Ash.Policy.Check.BuiltInChecks</span>
+        <span class="module-tag">Ash.SatSolver</span>
+        <span class="module-tag">Ash.Authorizer</span>
+      </div>
+    </div>
+  </div>
+  <div class="arrow">&#x25BC;</div>
+
+  <!-- Layer 9: Data Layer -->
+  <div class="layer layer-data" onclick="toggle(this)">
+    <div class="layer-header">
+      <div>
+        <div class="layer-num">Layer 9 &mdash; Persistence</div>
+        <div class="layer-title">Data Layer</div>
+        <div class="layer-desc">Storage abstraction with built-in ETS, Mnesia, Simple backends. Extensible for Postgres, SQLite, etc.</div>
+      </div>
+      <div class="expand-hint">&#9662; details</div>
+    </div>
+    <div class="layer-modules">
+      <div class="module-grid">
+        <span class="module-tag">Ash.DataLayer</span>
+        <span class="module-tag">Ash.DataLayer.Ets</span>
+        <span class="module-tag">Ash.DataLayer.Mnesia</span>
+        <span class="module-tag">Ash.DataLayer.Simple</span>
+        <span class="module-tag">AshPostgres (ext)</span>
+        <span class="module-tag">AshSqlite (ext)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cross-cutting concerns -->
+  <div class="side-sections">
+    <div class="side-card">
+      <h3>Notifier</h3>
+      <p>Event notification system, PubSub integration. Fires after successful actions complete.</p>
+    </div>
+    <div class="side-card">
+      <h3>Tracer</h3>
+      <p>Observability & tracing. Telemetry integration for monitoring action execution.</p>
+    </div>
+    <div class="side-card">
+      <h3>Reactor</h3>
+      <p>Workflow orchestration engine. Composes multiple actions into complex multi-step flows.</p>
+    </div>
+  </div>
+
+  <!-- Data flow diagram -->
+  <div class="flow-section">
+    <h2>Request Flow</h2>
+    <div class="flow-diagram">
+      <div class="flow-node fn-blue">User Code / API Client</div>
+      <div class="flow-arrow">&#x25BC;</div>
+      <div class="flow-node fn-blue">Ash.create / read / update / destroy</div>
+      <div class="flow-arrow">&#x25BC;</div>
+      <div class="flow-node fn-teal">Domain &rarr; resolve resource & action</div>
+      <div class="flow-arrow">&#x25BC;</div>
+      <div class="flow-node fn-green">Action Engine</div>
+      <div class="flow-arrow">&#x25BC;</div>
+
+      <div class="flow-branch">
+        <div class="flow-branch-col">
+          <div class="flow-branch-label">WRITE path</div>
+          <div class="flow-node fn-green" style="min-width:200px">Changeset</div>
+          <div class="flow-arrow">&#x25BC;</div>
+          <div class="flow-node fn-amber" style="min-width:200px">Validations</div>
+          <div class="flow-arrow">&#x25BC;</div>
+          <div class="flow-node fn-amber" style="min-width:200px">Authorization</div>
+          <div class="flow-arrow">&#x25BC;</div>
+          <div class="flow-node fn-red" style="min-width:200px">Data Layer (write)</div>
+        </div>
+        <div class="flow-branch-col">
+          <div class="flow-branch-label">READ path</div>
+          <div class="flow-node fn-green" style="min-width:200px">Query Builder</div>
+          <div class="flow-arrow">&#x25BC;</div>
+          <div class="flow-node fn-amber" style="min-width:200px">Filter & Sort</div>
+          <div class="flow-arrow">&#x25BC;</div>
+          <div class="flow-node fn-amber" style="min-width:200px">Authorization</div>
+          <div class="flow-arrow">&#x25BC;</div>
+          <div class="flow-node fn-red" style="min-width:200px">Data Layer (read)</div>
+        </div>
+      </div>
+
+      <div class="flow-arrow" style="margin-top: 8px">&#x25BC;</div>
+      <div class="flow-node fn-purple">Notifications &amp; Tracing</div>
+      <div class="flow-arrow">&#x25BC;</div>
+      <div class="flow-node fn-blue">Result returned to caller</div>
+    </div>
+  </div>
+
+  <p class="legend">Ash Framework v3.0 &mdash; Architecture Visualization &mdash; Generated for devall-org/ash</p>
+</div>
+
+<script>
+function toggle(el) {
+  el.classList.toggle('expanded');
+}
+</script>
+</body>
+</html>
